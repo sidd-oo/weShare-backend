@@ -5,19 +5,23 @@ const File = require('../models/file')
 const {v4: uuid4} = require('uuid');
 
 let storage = multer.diskStorage({
-    destination: (req, file, cb) => cb(null, 'uploads/'),
+    destination: (req, file, cb) => cb(null, "uploads/"),
     filename: (req, file, cb) => {
-        const uniqueName = `${Date.now()} - ${Math.round(Math.random() * 1E9)}${path.extname(file.orginalname)}`;
+        const uniqueName = `${Date.now()}-${Math.round(Math.random() * 1E9)}${path.extname(file.originalname)}`;
         cb(null, uniqueName);
-    }
-})
+    },
+});
 
 let upload = multer({
     storage,
-    limit: {fileSize: 100000 * 100},
+    limit: {fileSize: 1000000 * 100},
 }).single('myfile');
 
-router.post('/', (req, res) => {
+router.get('/hello', (req, res) => {
+    res.json({message: "Hello"});
+})
+
+router.post('/',(req, res) => {
 
     upload(req, res, async (err)=>{
         //Validate request
@@ -33,15 +37,13 @@ router.post('/', (req, res) => {
             uuid: uuid4(),
             path: req.file.path,
             size: req.file.size,
-        })
-    })
+        });
+        const response = await file.save();
+        
+        //Send response as Link
+        return res.json({file: `${process.env.APP_BASE_URL}/files/${response.uuid}`});
+    });
 
-    const response = await file.save();
-    return res.json({file: `${process.env.APP_BASE_URL}/files/${response.uuid}`});
-
-    
-
-    //Send response as Link
 })
 
 module.exports = router;
