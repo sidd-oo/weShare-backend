@@ -12,8 +12,12 @@ connectDB();
 
 //Template engine
 app.set('views', path.join(__dirname,'/views'));
-app.set('view engine', 'ejs')
+app.set('view engine', 'ejs');
 
+//Parse JSON
+app.use(express.json());
+
+//Static files path set
 app.use(express.static('public'));
 
 //Routes

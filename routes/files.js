@@ -21,9 +21,6 @@ let upload = multer({
   limit: { fileSize: 1000000 * 100 },
 }).single("myfile");
 
-router.get("/hello", (req, res) => {
-  res.json({ message: "Hello" });
-});
 
 router.post("/", (req, res) => {
   upload(req, res, async (err) => {
@@ -68,6 +65,7 @@ router.post("/send", async(req, res) => {
 
     const response = await file.save();
 
+    console.log("send email point start");
     //Send email
     sendMail({
         from: emailFrom,
@@ -81,7 +79,8 @@ router.post("/send", async(req, res) => {
             expires: '24 hours'
         })
     });
-
+    console.log("send email point end");
+    return res.send({success: true});
 });
 
 module.exports = router;
