@@ -7,8 +7,15 @@ const downloadRoutes = require("./routes/download");
 const PORT = process.env.PORT || 3000;
 const path = require('path');
 const { download } = require('express/lib/response');
+const cors = require("cors");
 
 connectDB();
+
+//CORS 
+const corsOptions = {
+    origin: process.env.ALLOWED_CLIENTS.split(",")
+}
+app.use(cors(corsOptions));
 
 //Template engine
 app.set('views', path.join(__dirname,'/views'));
